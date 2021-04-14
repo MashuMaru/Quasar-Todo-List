@@ -1,5 +1,21 @@
 <template>
   <q-page class="bg-grey-3 column">
+    <div class="row q-pa-sm bg-primary">
+      <q-input
+        class="col"
+        square
+        filled
+        bg-color="white"
+        v-model="newTask"
+        label="Add task"
+        dense
+        v-on:keyup.enter="addTask"
+      >
+        <template v-slot:append>
+          <q-btn round dense flat icon="add" v-on:click="addTask" />
+        </template>
+      </q-input>
+    </div>
     <q-list class="bg-white" separator bordered>
       <q-item
         v-ripple
@@ -20,10 +36,23 @@
           <q-item-label>{{ task.title }}</q-item-label>
         </q-item-section>
         <q-item-section v-if="task.done" side>
-          <q-btn flat dense round color="primary" icon="delete" v-on:click.stop="deleteItem(index)" />
+          <q-btn
+            flat
+            dense
+            round
+            color="primary"
+            icon="delete"
+            v-on:click.stop="deleteItem(index)"
+          />
         </q-item-section>
       </q-item>
     </q-list>
+    <div v-if="!tasks.length" class="no-task absolute-center">
+      <q-icon name="check" size="100px" color="primary" />
+      <div class="text-h5 text-primary text-center">
+        No tasks
+      </div>
+    </div>
   </q-page>
 </template>
 
@@ -31,34 +60,45 @@
 export default {
   data: function() {
     return {
+      newTask: "",
       tasks: [
-        {
-          title: "Workout in the morning.",
-          done: false
-        },
-        {
-          title: "Code for 2 hours.",
-          done: false
-        },
-        {
-          title: "Meditate.",
-          done: false
-        }
+        // {
+        //   title: "Workout in the morning.",
+        //   done: false
+        // },
+        // {
+        //   title: "Code for 2 hours.",
+        //   done: false
+        // },
+        // {
+        //   title: "Meditate.",
+        //   done: false
+        // }
       ]
     };
   },
   methods: {
     deleteItem(index) {
-      this.$q.dialog({
-        dark: true,
-        title: 'Confirm',
-        message: 'Are you sure you would like to delete this task?',
-        cancel: true,
-        persistent: true
-      }).onOk(() => {
-        this.tasks.splice(index, 1);
-        this.$q.notify('Task has been deleted.')
-      })
+      this.$q
+        .dialog({
+          dark: true,
+          title: "Confirm",
+          message: "Are you sure you would like to delete this task?",
+          cancel: true,
+          persistent: true
+        })
+        .onOk(() => {
+          this.tasks.splice(index, 1);
+          this.$q.notify("Task has been deleted.");
+        });
+    },
+    addTask() {
+      this.tasks.push({
+        title: this.newTask,
+        done: false
+      });
+      this.$q.notify("Task has been added!");
+      this.newTask = "";
     }
   }
 };
@@ -70,5 +110,9 @@ export default {
     text-decoration: line-through;
     color: #bbb;
   }
+}
+
+.no-task {
+  opacity: 0.5;
 }
 </style>
