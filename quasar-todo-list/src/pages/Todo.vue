@@ -93,12 +93,22 @@ export default {
         });
     },
     addTask() {
-      this.tasks.push({
-        title: this.newTask,
-        done: false
-      });
-      this.$q.notify("Task has been added!");
-      this.newTask = "";
+      if (this.newTask === '') {
+        this.$q
+          .dialog({
+            title: "Whoops!",
+            message: "Task input is empty. Try typing something first."
+          })
+          .onOk(() => {
+          });
+      } else {
+        this.tasks.push({
+          title: this.newTask,
+          done: false
+        });
+        this.$q.notify("Task has been added!");
+        this.newTask = "";
+      }
     }
   }
 };
